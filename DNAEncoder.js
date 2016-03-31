@@ -1,9 +1,9 @@
 'use strict';
 
 const stream = require('stream');
-const debug  = require('debug')('DNACompressor');
+const debug  = require('debug')('DNAEncoder');
 
-class DNACompressor extends stream.Transform {
+class DNAEncoder extends stream.Transform {
   constructor() {
     super({
       highWaterMark: 65535,
@@ -19,17 +19,18 @@ class DNACompressor extends stream.Transform {
   }
 
   _transform(chunk, encoding, done) {
-    let compressedChunk = this.compress(chunk);
-    this.push(compressedChunk);
+    let encodedChunk = this.encode(chunk);
+    this.push(encodedChunk);
     done();
   }
 
-  _flush() {
+  _flush(done) {
     debug('Flushing');
+    done();
   }
 
-  compress(chunk) {
-    debug(`Compressing chunk: ${chunk.length}`);
+  encode(chunk) {
+    debug(`Encoding chunk: ${chunk.length}`);
     // Stores four letters per byte.
     var buffer = new Buffer(chunk.length / 4);
     
@@ -52,4 +53,4 @@ class DNACompressor extends stream.Transform {
   }
 }
 
-module.exports = DNACompressor;
+module.exports = DNAEncoder;
